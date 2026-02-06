@@ -100,5 +100,43 @@ SELECT e.nom, e.cognoms, d.nom AS nom_dep, l.ciutat
     INNER JOIN departaments AS d ON e.departament_id= d.departament_id
     INNER JOIN localitzacions l ON l.localitzacio_id = d.localitzacio_id
     WHERE e.departament_id = d.departament_id; 
-     
+
+-- LEFT JOIN combina todos los registros de la tabla de la izquierda con los que combinan de la derecha asi aparecen todos los registros de empleats y cuando no combina sale null
+
+SELECT e.nom, e.cognoms, IFNULL(d.nom, "NO DEP:") AS nom_dep
+	FROM empleats AS e 
+    LEFT JOIN departaments AS d ON e.departament_id= d.departament_id; 
+    
+-- Existe lo mismo pero con el RIGHT JOIN
+
+SELECT IFNULL(e.nom, "NO HI HA TREBALLADORS"), IFNULL(e.cognoms,"NO HI HA TREBALLADORS"), d.nom AS nom_dep
+	FROM empleats AS e 
+    RIGHT JOIN departaments AS d ON e.departament_id= d.departament_id; 
+
+-- como podemos ver en la siguiente tabla podemos combinar varias tablas para juntar valores
+
+SELECT e.nom, e.cognoms, d.nom AS nom_dep, f.nom_treball
+	FROM empleats AS e 
+    INNER JOIN departaments AS d ON e.departament_id= d.departament_id
+    INNER JOIN feines f ON f.feina_codi = e.feina_codi;
+    
+-- se pueden crear vistas con las selects de inner join
+
+CREATE VIEW v_empleats_deps AS 
+	SELECT e.nom, e.cognoms, d.nom AS nom_dep, e.feina_codi
+	FROM empleats AS e 
+    INNER JOIN departaments AS d ON e.departament_id= d.departament_id;
+    
+-- y despues hacer INNER JOIN conb estas vistas
+
+SELECT *
+	FROM v_empleats_deps ved
+    INNER JOIN feines f ON f.feina_codi = ved.feina_codi;
+    
+SELECT e.nom, e.cognoms, e.salari, f.salari_min, f.salari_max,f.nom_treball
+	FROM empleats e 
+    INNER JOIN feines f ON e.feina_codi = f.feina_codi
+    WHERE e.salari > f.salari_min AND e.salari < f.salari_max; 
+
+    
     
