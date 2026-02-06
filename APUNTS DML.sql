@@ -70,3 +70,35 @@ ORDER BY depatament_id ASC;
 WHERE departament_id IS NOT NULL 
 GROUP BY departament_id
 HAVING AVG (salari)< 11000 AND COUNT(*)> 2; -- el having es lo mismo que el WHERE pero para el group by
+
+-- el producte cartacia es la combinacion de las filas de una tabla con todas las filas de la otra esto se hace poniendo en el FROM de dos tablas 
+-- para poner dos campos que se llamen iguales en dos tablas tienes que poner el nombre de la tabla.nombre del campo
+
+-- ejemplo 
+
+use rrhh;
+ 
+SELECT empleats.nom, empleats.cognoms, departaments.nom AS nom_dep
+	FROM empleats AS e,departaments AS d
+    WHERE empleats.departament_id = departaments.departament_id;
+    
+    -- a las tablas se les puede poner AS y la inicial para cambiar en la select el nombre de la tabla y asi no tener que esctribir tanto ( esto es equivalente a la tabla de arriba)
+   
+   SELECT e.nom, e.cognoms, d.nom AS nom_dep
+	FROM empleats AS e,departaments AS d
+    WHERE e.departament_id = d.departament_id; 
+    
+    -- para hacer combinaciones de diferentes tablas usamos la clausla INNER JOIN
+    
+SELECT e.nom, e.cognoms, d.nom AS nom_dep
+	FROM empleats AS e INNER JOIN departaments AS d ON e.departament_id= d.departament_id
+    WHERE e.departament_id = d.departament_id; 
+    
+    -- se puede hacer INNER JOIN de mas de una tabla
+SELECT e.nom, e.cognoms, d.nom AS nom_dep, l.ciutat
+	FROM empleats AS e 
+    INNER JOIN departaments AS d ON e.departament_id= d.departament_id
+    INNER JOIN localitzacions l ON l.localitzacio_id = d.localitzacio_id
+    WHERE e.departament_id = d.departament_id; 
+     
+    
