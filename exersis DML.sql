@@ -85,12 +85,84 @@ SELECT cognoms, departament_id, email
 SELECT *
 	FROM empleats
     WHERE data_contractacio >= '1996-01-01';
+
+use rrhh;
+
+-- Joins
+-- EX1
+SELECT d.nom, e.cognoms, e.nom
+	FROM empleats e
+    INNER JOIN departaments d ON e.departament_id=d.departament_id
+    ORDER BY d.nom ASC, e.cognoms ASC, e.nom ASC;
+
+-- EX2
+SELECT d.departament_id, d.nom, l.adreca, l.codi_postal, l.ciutat
+	FROM departaments d
+    INNER JOIN localitzacions l ON d.localitzacio_id = l.localitzacio_id;
+
+-- EX 3
+SELECT d.departament_id, d.nom, l.adreca, l.codi_postal, l.ciutat
+	FROM departaments d
+    INNER JOIN localitzacions l ON d.localitzacio_id = l.localitzacio_id
+    WHERE d.nom = "Marketing";
+    
+-- EX 4
+SELECT l.localitzacio_id, l.ciutat, l.estat_provincia, p.nom AS nom_pais, r.nom AS nom_regio
+	FROM localitzacions l
+    INNER JOIN paisos p ON l.pais_id= p.pais_id
+    INNER JOIN regions r ON p.regio_id = r.regio_id
+    ORDER BY l.localitzacio_id;
+    
+-- EX 5
+SELECT d.nom AS Nom, l.ciutat AS Ciutat, COUNT(e.empleat_id) AS Num_empleats, ROUND(AVG(e.salari),2) AS Salari_Mig
+	FROM departaments d
+    LEFT JOIN localitzacions l ON l.localitzacio_id = d.localitzacio_id
+    LEFT JOIN empleats e ON e.departament_id = d.departament_id
+    GROUP BY d.nom, l.ciutat
+    ORDER BY d.nom;
+    
+-- EX 6 
+SELECT  hf.empleat_id, e.nom, COUNT(*)
+	FROM historial_feines hf
+    INNER JOIN empleats e on e.empleat_id = hf.empleat_id
+GROUP BY hf.empleat_id
+HAVING COUNT(*) >  1 ;
+
+-- EX 8
+
+SELECT e.empleat_id,
+	   e.nom, 
+       e.cognoms, 
+       e.salari, 
+       YEAR(e.data_contractacio) AS any_contractacio, 
+       d.nom
+FROM empleats e
+INNER JOIN departaments d ON e.departament_id = d.departament_id
+WHERE YEAR(e.data_contractacio) < 1999
+  AND e.salari BETWEEN 10000 AND 20000
+  AND (d.nom = "VENDES" OR d.nom = "COMPRES");
+  
+-- EX 15
+
+SELECT e.nom, e.cognoms
+	FROM historial_feines hf
+    INNER JOIN empleats e ON e.empleat_id = hf.empleat_id
+    INNER JOIN feines f ON f.feina_codi = hf.feina_codi
+    INNER JOIN departaments d ON d.departament_id = hf.departament_id;
+    
+SELECT e.nom, e.salari, f.nom_treball,d.nom AS nom_dep, l.ciutat, p.nom AS nom_pais, r.nom AS nom_regio
+	FROM empleats e
+    LEFT JOIN departaments d ON d.departament_id = e.departament_id
+    LEFT JOIN localitzacions l ON l.localitzacio_id = d.localitzacio_id
+    LEFT JOIN paisos p ON p.pais_id = l.pais_id
+    LEFT JOIN regions r ON r.regio_id = p.regio_id
+    INNER JOIN feines f ON f.feina_codi = e.feina_codi;
+    
+-- EX 20
+SELECT e.empleat_id, e.nom, e.cognoms, e.data_contractacio, c.empleat_id AS id_cap, c.nom AS nom_cap, c.cognoms AS cognoms_cap, c.data_contractacio
+	FROM empleats e
+    INNER JOIN empleats c ON e.id_cap=c.empleat_id
+    WHERE e.data_contractacio<c.data_contractacio;
     
 
 
-
-    
-    
-
-           
-			
