@@ -63,8 +63,29 @@ SELECT  *
     INNER JOIN clubs cu ON cu.club_id = ea.club_id
     WHERE cu.nom = "F.C. Barcelona" AND dayofweek(p.data_hora)=1;
     
-SELECT *
-	FROM partits p
-    INNER JOIN
-    WHERE p.partit_id = 1;
+
 	
+SELECT ea.nom AS nom_equip, SUM(
+		CASE estadistic_id
+			WHEN 3 THEN epj.valor*1
+            WHEN 5 THEN epj.valor*2
+            WHEN 7 THEN epj.valor*3
+		END) AS punts
+	FROM equips_anys ea
+   INNER JOIN partits p ON p.equip_local =ea.equip_any_id OR p.equip_visitant = ea.equip_any_id
+   INNER JOIN contractes c ON c.equip_any_id = ea.equip_any_id
+   INNER JOIN estadistic_partit_jugador epj ON epj.jugador_id = c.jugador_id AND epj.partit_id= p.partit_id
+   WHERE p.partit_id =1 AND epj.estadistic_id IN (3,5,7)
+   GROUP BY ea.equip_any_id;
+   
+   SELECT j.lloc_naixement -- junta las dos selects y quita las repetidas, si delante del union ponemos all salen todos menos los repetidos
+	FROM equips_anys ea
+    INNER JOIN contractes c ON c.equip_any_id = ea.equip_any_id
+    INNER JOIN jugadors j ON j.jugador_id = c.jugador_id
+    WHERE ea.equip_any_id = 2
+    UNION
+    SELECT j.lloc_naixement
+	FROM equips_anys ea
+    INNER JOIN contractes c ON c.equip_any_id = ea.equip_any_id
+    INNER JOIN jugadors j ON j.jugador_id = c.jugador_id
+    WHERE ea.equip_any_id = 1;
