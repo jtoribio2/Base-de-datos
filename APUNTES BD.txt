@@ -1,0 +1,63 @@
+
+-- creacio de la taula empleats 
+CREATE DATABASE exercicis; 
+-- utilitzar la taula creada
+USE exercicis;
+
+ALTER TABLE empleats -- modifica las tablas ya creadas
+	ADD COLUMN departament_id INT UNSIGNED,
+    ADD CONSTRAINT fk_emplats_departaments FOREIGN KEY(departament_id)
+		REFERENCES departaments (departament_id);
+
+ALTER TABLE empleats
+	ADD COLUMN nom_complet VARCHAR(42) GENERATED ALWAYS AS (concat(nom, ', ',cognom1)) STORED; -- crea un campo generat, para concatenar hay que usar el concat amb lo que quieras concatenar
+
+ALTER TABLE empleats -- modificar una columna de la tabla
+	MODIFY COLUMN nom VARCHAR(20) NOT NULL,
+    MODIFY COLUMN nom_complet VARCHAR(47);
+    
+ALTER TABLE empleats -- añadimos un unique con su nombre de constrein
+	MODIFY COLUMN dni CHAR(9) NOT NULL,
+    ADD CONSTRAINT uk_empleats_dni UNIQUE(dni);
+
+-- creacio de una taula
+CREATE TABLE jugadors (
+	jugador_id INT UNSIGNED AUTO_INCREMENT,
+	nom		varchar(25),
+    cognom1	VARCHAR (30),
+    cognom2	VARCHAR (30),
+    posicio	ENUM('BASE','ALER','ALER-PIVOT','PIVOT') COMMENT "aquest camp contindra dni o passaport de l'empleat", -- ficar un comentari dins de un atribut 
+    CONSTRAINT pk_empleats PRIMARY KEY (empleat_id), -- las constrains son las restriccions
+	ON DELETE CASCADE -- puede ser RESTRICT SET NULL O CASCADE
+    );
+    
+CREATE TABLE departaments(
+	departament_id INT UNSIGNED auto_increment,
+    nom				VARCHAR(30),
+    CONSTRAINT pk_departaments PRIMARY KEY (departament_id)
+    );
+    
+DROP TABLE IF EXISTS empleats ;-- esto borra la tabla empleats si existe
+DROP DATABASE empresa; -- esto borra la base de datos entero
+
+CREATE TABLE IF NOT EXISTS empleats; -- crea una tabla empleats si no existe
+
+DROP TABLE departaments;
+
+CREATE TABLE departaments(
+	departament_id INT UNSIGNED auto_increment,
+    director_id	   INT UNSIGNED,  -- tenemos que crear el atributo para poder añadirlo 
+    nom				VARCHAR(30),
+    CONSTRAINT pk_departaments PRIMARY KEY (departament_id),
+    CONSTRAINT fk_departaments_empleats /* el nombre es fk_[nombre de la tabla donde estoy]_[nombre de la tabla donde viene] */ FOREIGN KEY (director_id) -- el nombre que ponemos no tiene porque ser el mismo
+		REFERENCES empleats (empleat_id) -- Le decimos que la fk vendra de la tabla empleats ya creada y el atributo sera empleat id
+    );
+    
+    
+
+
+
+
+    
+
+
