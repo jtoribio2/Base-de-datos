@@ -158,11 +158,106 @@ SELECT e.nom, e.salari, f.nom_treball,d.nom AS nom_dep, l.ciutat, p.nom AS nom_p
     LEFT JOIN regions r ON r.regio_id = p.regio_id
     INNER JOIN feines f ON f.feina_codi = e.feina_codi;
     
--- EX 20
+-- EX 19
 SELECT e.empleat_id, e.nom, e.cognoms, e.data_contractacio, c.empleat_id AS id_cap, c.nom AS nom_cap, c.cognoms AS cognoms_cap, c.data_contractacio
 	FROM empleats e
     INNER JOIN empleats c ON e.id_cap=c.empleat_id
     WHERE e.data_contractacio<c.data_contractacio;
     
+ -- EX 20
+ SELECT SUM(IF(YEAR (data_contractacio) = 1996,1,0)) AS any_1996,
+ COUNT(*) AS total
+	FROM empleats
+    WHERE data_contractacio IN (1996,1997,1998);
+    
+-- Exercicis SUBCUNSULTES
+
+-- EX 1
+SELECT e.empleat_id, e.nom, e.salari
+	FROM empleats e
+    WHERE e.salari = ( SELECT e2.salari
+						FROM empleats e2
+                        WHERE e2.nom = "Pat" 
+                        AND e2.cognoms = "Fay"
+                        AND e.empleat_id != e2.empleat_id);
+-- EX 2
+SELECT e.empleat_id, e.nom, e.salari
+	FROM empleats e
+    WHERE e.salari > ( SELECT e2.salari
+						FROM empleats e2
+                        WHERE e2.nom = "Pat" 
+                        AND e2.cognoms = "Fay"
+                        AND e.empleat_id != e2.empleat_id);
+-- EX 3
+SELECT e.empleat_id, e.cognoms, e.departament_id
+	FROM empleats e
+    WHERE e.departament_id = ( SELECT e2.departament_id
+						FROM empleats e2
+                        WHERE e2.nom = "Pat" 
+                        AND e2.cognoms = "Fay"
+                        AND e.empleat_id != e2.empleat_id);
+-- EX 4 
+SELECT e.empleat_id, e.nom, e.salari
+	FROM empleats e
+    WHERE e.salari > ( SELECT MAX(e2.salari)
+						FROM empleats e2
+                        INNER JOIN departaments d ON d.departament_id = e2.departament_id
+                        WHERE d.nom = "Vendes");
+
+
+SELECT e.nom
+	FROM empleats e
+    WHERE e.departament_id = (SELECT d.departament_id
+									FROM departaments d
+                                    WHERE d.nom = "IT");
+
+SELECT e.empleat_id, e.nom, e.salari
+	FROM empleats e
+    WHERE e.salari> (SELECT MIN(e2.salari)
+						FROM empleats e2
+                        INNER JOIN departaments d ON e.departament_id = d.departament_id
+                        WHERE d.nom= "VENDES");
+
+SELECT e.empleat_id, e.nom, e.salari
+	FROM empleats e
+    WHERE e.salari> (SELECT MAX(e2.salari)
+						FROM empleats e2
+                        INNER JOIN departaments d ON e.departament_id = d.departament_id
+                        WHERE d.nom= "Vendes");
+                        
+
+SELECT MAX(e.salari)
+	FROM empleats e
+    ORDER BY salari DESC;
+    
+SELECT e3.salari
+	FROM empleats e3
+    WHERE e3.salari != (SELECT MAX(e2.salari) AS salarimax
+						FROM empleats e2
+						ORDER BY salari DESC)
+    ORDER BY e3.salari DESC
+    LIMIT 1;
+    
+SELECT e.nom, e.cognoms, e.salari
+	FROM empleats e
+    WHERE e.salari = (SELECT MAX(e3.salari)
+						FROM empleats e3
+						WHERE e3.salari != (SELECT MAX(e2.salari) AS salarimax
+												FROM empleats e2
+											)
+						);
+                        
+SELECT *
+	FROM departaments d 
+WHERE EXISTS (SELECT 1
+				FROM empleats e
+                WHERE d.departament_id= e.departament_id);
+                        
+                        
+
+    
+
+
+	
 
 
